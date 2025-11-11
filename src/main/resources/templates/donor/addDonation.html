@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Donation | FoodShare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+        /* Custom Radio Button Styling - Like Remember Me Checkbox */
+        .form-check-input[type="radio"] {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+            border: 2px solid #6C63FF !important;
+            border-radius: 50% !important;
+            background-color: white !important;
+            transition: all 0.2s ease;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            position: relative;
+        }
+        
+        .form-check-input[type="radio"]:hover {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1) !important;
+        }
+        
+        .form-check-input[type="radio"]:checked {
+            background-color: #6C63FF !important;
+            border-color: #6C63FF !important;
+        }
+        
+        .form-check-input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .form-check-input[type="radio"]:focus {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.2) !important;
+            outline: none !important;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            line-height: 1.5;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <aside class="col-md-3 col-xl-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </aside>
+        
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-lg-4 py-4">
+            <div class="glass-card p-4 shadow rounded-4 mx-auto" style="max-width:700px;">
+                <h2 class="gradient-text fw-bold mb-4"><i class="fas fa-plus-circle me-2"></i>Add New Donation</h2>
+                <form th:action="@{/donor/add}" method="post" enctype="multipart/form-data" th:object="${donation}">
+                    <!-- Success Messages -->
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${successMessage}">Success message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                    <!-- Error Messages -->
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}">Error message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                    <!-- Validation Errors -->
+                    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Please correct the following errors:</h6>
+                        <ul class="mb-0">
+                            <li th:each="error : ${#fields.allErrors()}" th:text="${error}">Error message</li>
+                        </ul>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Food Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{foodName}" placeholder="e.g., Rice & Curry" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{quantity}" placeholder="e.g., 10 Plates" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Briefly describe the food..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Food Type <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3 flex-wrap">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" th:field="*{foodType}" id="veg" value="VEG" required>
+                                    <label class="form-check-label user-select-none" for="veg">
+                                        <span class="me-1">🥗</span>Veg
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" th:field="*{foodType}" id="nonveg" value="NON-VEG">
+                                    <label class="form-check-label user-select-none" for="nonveg">
+                                        <span class="me-1">🍗</span>Non-Veg
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" th:field="*{foodType}" id="vegan" value="VEGAN">
+                                    <label class="form-check-label user-select-none" for="vegan">
+                                        <span class="me-1">�</span>Vegan
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Expiry Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" th:field="*{expiryDate}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{city}" placeholder="e.g., Chennai" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Food Image (Optional)</label>
+                        <input class="form-control" type="file" name="imageFile" id="imageFile" accept="image/*" onchange="previewImage(event)">
+                        <img id="preview" src="#" alt="Preview" class="img-fluid mt-3 rounded-3 shadow d-none" style="max-height:200px;">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn gradient-btn rounded-pill py-2">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Donation
+                        </button>
+                        <a th:href="@{/donor/dashboard}" class="btn btn-outline-secondary rounded-pill">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    /* Enhanced radio button styling */
+    .form-check-input[type="radio"] {
+        cursor: pointer;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0.15rem;
+    }
+    
+    .form-check-input[type="radio"]:checked {
+        background-color: #6C63FF;
+        border-color: #6C63FF;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        padding-left: 0.25rem;
+    }
+    
+    .form-check-inline {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+    }
+    
+    .form-check-inline:has(.form-check-input:checked) {
+        background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        box-shadow: 0 2px 8px rgba(108, 99, 255, 0.2);
+    }
+</style>
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var preview = document.getElementById('preview');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.classList.remove('d-none');
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.classList.add('d-none');
+        }
+    }
+    
+    // Set min date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.querySelector('input[type="date"]').setAttribute('min', today);
+    });
+</script>
+</body>
+</html>
