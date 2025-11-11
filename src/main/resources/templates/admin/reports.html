@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports | FoodShare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <aside class="col-md-3 col-xl-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </aside>
+        
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-lg-5 py-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold gradient-text mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Analytics & Reports
+                </h2>
+                <a class="btn gradient-btn rounded-pill" th:href="@{/admin/reports/export}">
+                    <i class="fas fa-file-export me-2"></i>Export CSV
+                </a>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="glass-stat-card text-center p-4 rounded-4 shadow-sm h-100">
+                        <div class="text-primary mb-2">
+                            <i class="fas fa-hand-holding-heart fa-2x"></i>
+                        </div>
+                        <div class="small text-muted text-uppercase mb-1">Total Donations</div>
+                        <div class="fs-3 fw-bold text-primary" th:text="${totalReportedDonations ?: 0}">0</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="glass-stat-card text-center p-4 rounded-4 shadow-sm h-100">
+                        <div class="text-success mb-2">
+                            <i class="fas fa-weight fa-2x"></i>
+                        </div>
+                        <div class="small text-muted text-uppercase mb-1">Food Saved (kg)</div>
+                        <div class="fs-3 fw-bold text-success" th:text="${totalFoodSaved ?: '0.0'}">0.0</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="glass-stat-card text-center p-4 rounded-4 shadow-sm h-100">
+                        <div class="text-info mb-2">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <div class="small text-muted text-uppercase mb-1">Receivers Served</div>
+                        <div class="fs-3 fw-bold text-info" th:text="${totalReceiversServed ?: 0}">0</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="glass-stat-card text-center p-4 rounded-4 shadow-sm h-100">
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                        <div class="small text-muted text-uppercase mb-1">Reports Generated</div>
+                        <div class="fs-3 fw-bold text-warning" th:text="${#lists.size(reports)}">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Table -->
+            <div class="glass-card p-4 rounded-4 shadow mb-4">
+                <h5 class="fw-semibold mb-3">
+                    <i class="fas fa-table me-2"></i>Daily Reports
+                </h5>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="fas fa-calendar me-1"></i>Date</th>
+                                <th><i class="fas fa-hand-holding-heart me-1"></i>Donations</th>
+                                <th><i class="fas fa-weight me-1"></i>Food Saved (kg)</th>
+                                <th><i class="fas fa-users me-1"></i>Receivers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${reports}" th:if="${reports != null && !reports.isEmpty()}">
+                                <td>
+                                    <span th:text="${#temporals.format(r.reportDate, 'dd MMM yyyy')}"></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary rounded-pill" th:text="${r.totalDonations}">0</span>
+                                </td>
+                                <td>
+                                    <span class="text-success fw-semibold" th:text="${r.totalFoodSavedKg != null ? r.totalFoodSavedKg : '0.0'}">0.0</span>
+                                </td>
+                                <td>
+                                    <span class="text-info fw-semibold" th:text="${r.totalReceiversServed}">0</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${reports == null || reports.isEmpty()}">
+                                <td colspan="4" class="text-center text-muted py-5">
+                                    <i class="fas fa-inbox fa-3x mb-3 d-block text-muted opacity-50"></i>
+                                    <div class="h6">No reports found yet.</div>
+                                    <small>Reports will appear here as data is generated.</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="glass-card p-4 rounded-4 shadow">
+                        <h5 class="fw-semibold mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>Monthly Donation Trends
+                        </h5>
+                        <div style="height: 300px;">
+                            <canvas id="monthlyBarChart" style="max-height: 100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 rounded-4 shadow h-100">
+                        <h5 class="fw-semibold mb-3">
+                            <i class="fas fa-trophy me-2"></i>Top Donors
+                        </h5>
+                        <div th:if="${topDonors != null && !topDonors.isEmpty()}">
+                            <div class="d-flex align-items-center mb-3 p-3 bg-light rounded" 
+                                 th:each="entry, stat : ${topDonors.entrySet()}"
+                                 th:classappend="${stat.index == 0} ? 'border-warning border-2' : ''">
+                                <div class="me-3">
+                                    <i class="fas fa-medal" 
+                                       th:classappend="${stat.index == 0} ? 'text-warning' : (${stat.index == 1} ? 'text-secondary' : 'text-warning-emphasis')"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold" th:text="${entry.key}">Donor Name</div>
+                                    <small class="text-muted" th:text="${entry.value} + ' donations'">0 donations</small>
+                                </div>
+                                <div class="badge bg-primary rounded-pill" th:text="${entry.value}">0</div>
+                            </div>
+                        </div>
+                        <div th:if="${topDonors == null || topDonors.isEmpty()}" class="text-center text-muted py-4">
+                            <i class="fas fa-user-friends fa-2x mb-2 d-block opacity-50"></i>
+                            <div class="h6">No donor activity yet</div>
+                            <small>Donor rankings will appear here as donations are made.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function () {
+                    console.log('Initializing chart...');
+                    
+                    const monthlyLabels = /*[[${monthlyLabels}]]*/ [];
+                    const monthlyValues = /*[[${monthlyValues}]]*/ [];
+                    
+                    console.log('Chart data:', { monthlyLabels, monthlyValues });
+
+                    const ctx = document.getElementById('monthlyBarChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: monthlyLabels.length > 0 ? monthlyLabels : ['No Data'],
+                                datasets: [{
+                                    label: 'Donations',
+                                    data: monthlyValues.length > 0 ? monthlyValues : [0],
+                                    backgroundColor: 'rgba(108, 99, 255, 0.8)',
+                                    borderColor: 'rgba(108, 99, 255, 1)',
+                                    borderWidth: 2,
+                                    borderRadius: 8
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            stepSize: 1
+                                        },
+                                        grid: {
+                                            color: 'rgba(0,0,0,0.1)'
+                                        }
+                                    },
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Chart canvas not found');
+                    }
+                });
+            </script>
+        </main>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
