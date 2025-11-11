@@ -1,4 +1,4 @@
-# 🍲 FoodShare - Fighting Hunger Through Technology
+# FoodShare - Fighting Hunger Through Technology
 
 <div align="center">
 
@@ -15,18 +15,18 @@
 
 ---
 
-## 🌍 The Problem We're Solving
+## The Problem We're Solving
 
 ### **The Global Food Waste Crisis**
 
 Every year, our world faces a devastating paradox:
 
-- 📊 **1.3 Billion Tons** of food is wasted globally every year
-- 💰 **$1 Trillion** worth of food ends up in landfills
-- 😢 **828 Million People** suffer from hunger worldwide
-- 🏪 **30-40%** of food produced in India never reaches consumers
-- 🍽️ Restaurants, hotels, and events discard perfectly edible food daily
-- 🌾 Meanwhile, millions go to bed hungry every night
+- **1.3 Billion Tons** of food is wasted globally every year
+- **$1 Trillion** worth of food ends up in landfills
+- **828 Million People** suffer from hunger worldwide
+- **30-40%** of food produced in India never reaches consumers
+- Restaurants, hotels, and events discard perfectly edible food daily
+- Meanwhile, millions go to bed hungry every night
 
 ### **The Disconnect**
 
@@ -42,16 +42,16 @@ The real tragedy isn't just the waste—it's the **disconnect between surplus an
 
 FoodShare bridges this critical gap by creating a **trusted, efficient, and transparent platform** that:
 
-✅ **Reduces food waste** by connecting donors with receivers in real-time  
-✅ **Fights hunger** by ensuring surplus food reaches those who need it most  
-✅ **Builds community** by fostering a culture of sharing and compassion  
-✅ **Provides transparency** through analytics and impact tracking  
-✅ **Saves resources** by preventing edible food from reaching landfills  
-✅ **Environmental impact** - reducing food waste means less methane emissions from landfills
+**Reduces food waste** by connecting donors with receivers in real-time  
+**Fights hunger** by ensuring surplus food reaches those who need it most  
+**Builds community** by fostering a culture of sharing and compassion  
+**Provides transparency** through analytics and impact tracking  
+**Saves resources** by preventing edible food from reaching landfills  
+**Environmental impact** - reducing food waste means less methane emissions from landfills
 
 ---
 
-## 🎯 Why This Solution Matters
+## Why This Solution Matters
 
 ### **For Society**
 - **Social Responsibility**: Enables individuals and businesses to contribute to solving hunger
@@ -77,9 +77,9 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🎁 **For Donors**
+### **For Donors**
 - **Quick Donation Listing**: Add food donations with photos, quantity, and expiry details
 - **Category Management**: Classify food as Veg 🥗, Non-Veg 🍗, or Vegan 🌱
 - **Real-time Dashboard**: Track your donations, impact metrics, and success rate
@@ -92,7 +92,7 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 - **Image Upload**: Showcase food quality with photo uploads
 - **Expiry Tracking**: Automatic highlighting of time-sensitive donations
 
-### 🤝 **For Receivers**
+### **For Receivers**
 - **Browse Donations**: View all available food in your area
 - **Smart Filtering**: Filter by food type, location, and quantity
 - **Claim System**: Request donations with a single click
@@ -101,7 +101,7 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 - **Real-time Updates**: See newly added donations instantly
 - **Impact Dashboard**: Track how much food you've received
 
-### 👨‍💼 **For Administrators**
+### **For Administrators**
 - **User Management**: Monitor and manage all donors and receivers
 - **System Reports**: Comprehensive analytics on platform usage
 - **Top Donors**: Recognize and highlight active contributors
@@ -109,7 +109,7 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 - **CSV Exports**: Download reports for analysis and record-keeping
 - **User Verification**: Ensure platform integrity and safety
 
-### 🎨 **User Experience**
+### **User Experience**
 - **Modern Glassmorphism UI**: Beautiful, contemporary design with smooth animations
 - **Responsive Design**: Perfect experience on mobile, tablet, and desktop
 - **Dark Mode**: Eye-friendly interface for any time of day
@@ -119,7 +119,7 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 - **Intuitive Navigation**: Easy-to-use interface for all user levels
 - **Fast Performance**: Optimized loading and smooth transitions
 
-### 🔐 **Security & Reliability**
+### **Security & Reliability**
 - **Spring Security**: Industry-standard authentication and authorization
 - **Role-based Access**: Separate portals for Donors, Receivers, and Admins
 - **Session Management**: Secure user sessions with automatic timeout
@@ -131,7 +131,7 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### **Backend**
 - **Java 17**: Modern, robust programming language
@@ -161,21 +161,21 @@ FoodShare bridges this critical gap by creating a **trusted, efficient, and tran
 
 ---
 
-## 📊 Project Statistics
+## Project Statistics
 
 ```
-📁 32 Java Classes
-🎨 31 HTML Templates  
-🚀 3 User Roles (Donor, Receiver, Admin)
-🗄️ 6 Database Entities
-🔒 Spring Security Integration
-📈 Real-time Analytics Dashboard
-🌐 Cloud-based PostgreSQL Database
+32 Java Classes
+31 HTML Templates  
+3 User Roles (Donor, Receiver, Admin)
+6 Database Entities
+Spring Security Integration
+Real-time Analytics Dashboard
+Cloud-based PostgreSQL Database
 ```
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### **Prerequisites**
 - Java JDK 17 or higher
@@ -202,9 +202,9 @@ mvn spring-boot:run
 
 | Role | Email | Password |
 |------|-------|----------|
-| 👨‍💼 Admin | admin@gmail.com | password123 |
-| 🎁 Donor | donor@gmail.com | password123 |
-| 🤝 Receiver | receiver@gmail.com | password123 |
+| Admin | admin@gmail.com | password123 |
+| Donor | donor@gmail.com | password123 |
+| Receiver | receiver@gmail.com | password123 |
 
 ### **Detailed Installation**
 
@@ -212,7 +212,7 @@ For comprehensive installation instructions including IDE setup, troubleshooting
 
 ---
 
-## 🌐 Deployment
+## Deployment
 
 ### **Deploy to Railway** (Recommended - Free Tier)
 
@@ -233,23 +233,36 @@ All necessary configuration files (`Procfile`, `railway.json`) are included.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
+
+### Landing Page
+*Landing Page of the FoodShare*
+
+<img width="1897" height="860" alt="Screenshot 2025-11-11 114256" src="https://github.com/user-attachments/assets/85fcde95-d32f-4f9c-844c-cf751bf39029" />
 
 ### Donor Dashboard
 *Real-time analytics showing total donations, food saved, people fed, and success rate*
 
+<img width="1911" height="859" alt="image" src="https://github.com/user-attachments/assets/a771dd8d-eb98-41fd-b189-66b4ef4b173f" />
+
 ### Add Donation Form
 *Custom-styled form with image upload, food categorization, and expiry tracking*
+
+<img width="746" height="850" alt="image" src="https://github.com/user-attachments/assets/8f300b01-a1d2-4fa5-ad57-2f9f98a13fc0" />
 
 ### Receiver Portal
 *Browse and claim available food donations in your area*
 
+<img width="1900" height="847" alt="image" src="https://github.com/user-attachments/assets/3e26e19f-6d19-4319-b07c-21c7ddd90528" />
+
 ### Admin Reports
 *Comprehensive system analytics and user management*
 
+<img width="1878" height="859" alt="image" src="https://github.com/user-attachments/assets/1fdebfde-b12d-4988-9150-fe4ea5429da7" />
+
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
 ### **Restaurants & Hotels**
 - Donate surplus food from buffets and events
@@ -278,7 +291,7 @@ All necessary configuration files (`Procfile`, `railway.json`) are included.
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### **Database Setup**
 
@@ -303,7 +316,7 @@ PORT=8083
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how you can help:
 
@@ -323,7 +336,7 @@ Contributions are welcome! Here's how you can help:
 
 ---
 
-## 📈 Future Enhancements
+## Future Enhancements
 
 - [ ] **Mobile App**: Native Android/iOS applications
 - [ ] **Real-time Notifications**: Push notifications for new donations
@@ -338,24 +351,23 @@ Contributions are welcome! Here's how you can help:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👨‍💻 Developer Contact
+## Developer Contact
 
 **Kabilesh C**
 
-- 🌐 Portfolio: [Coming Soon]
-- 💼 LinkedIn: [linkedin.com/in/kabilesh-c20](https://www.linkedin.com/in/kabilesh-c20)
-- 📧 Email: [kabileshc.dev@gmail.com](mailto:kabileshc.dev@gmail.com)
-- 🐙 GitHub: [@kabileshc](https://github.com/yourusername)
+- LinkedIn: [linkedin.com/in/kabilesh-c20](https://www.linkedin.com/in/kabilesh-c20)
+- Email: [kabileshc.dev@gmail.com](mailto:kabileshc.dev@gmail.com)
+- GitHub: [@kabileshc](https://github.com/yourusername)
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Spring Boot team for the amazing framework
 - Supabase for reliable cloud database hosting
@@ -365,7 +377,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 💡 Inspiration
+## Inspiration
 
 > "There are people in the world so hungry, that God cannot appear to them except in the form of bread." 
 > — *Mahatma Gandhi*
@@ -374,15 +386,15 @@ This project is inspired by the vision of a world where no one goes hungry while
 
 ---
 
-## 🌟 Support the Project
+## Support the Project
 
 If you find this project helpful:
 
-- ⭐ Star this repository
-- 🍴 Fork and contribute
-- 📢 Share with your network
-- 🐛 Report issues and bugs
-- 💡 Suggest new features
+- Star this repository
+- Fork and contribute
+- Share with your network
+- Report issues and bugs
+- Suggest new features
 
 **Together, we can make a difference!**
 
