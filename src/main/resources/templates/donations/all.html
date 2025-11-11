@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Donations | FoodShare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 d-none d-md-block sidebar px-0 glass-sidebar">
+            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        </div>
+        <main class="col-md-10 ms-sm-auto px-lg-5 py-4">
+            <h2 class="fw-bold gradient-text mb-4">All Donations</h2>
+            <div class="row g-4">
+                <div class="col-12 col-sm-6 col-lg-4 mb-3" th:each="donation : ${donations}">
+                    <div class="glass-card donation-card shadow rounded-4 h-100">
+                        <div class="img-wrap rounded-top-4" style="height:160px; overflow:hidden; background:#f8f9fa;">
+                            <img th:src="${donation.imageUrl}" alt="Food" class="w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="p-3">
+                            <div class="fw-bold fs-5 mb-1" th:text="${donation.foodName}"></div>
+                            <div class="small">Qty: <span th:text="${donation.quantity}"></span> &bull; City: <span th:text="${donation.city}"></span></div>
+                            <span class="badge rounded-pill" th:text="${donation.status}" th:classappend="
+                                ${donation.status == 'available'} ? 'bg-success' :
+                                ${donation.status == 'claimed'} ? 'bg-warning text-dark' :
+                                ${donation.status == 'expired'} ? 'bg-danger' : ''"></span>
+                            <div class="small mt-2 text-muted">Expires: <span th:text="${donation.expiryDate}"></span></div>
+                            <form th:action="@{'/donations/markClaimed/' + ${donation.id}}" method="post" th:if="${#authorization.expression('hasRole(''DONOR'') or hasRole(''ADMIN'')') && donation.status == 'available'}">
+                                <button type="submit" class="btn btn-sm btn-outline-gradient rounded-pill mt-2">Mark Claimed</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
