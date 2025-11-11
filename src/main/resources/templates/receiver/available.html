@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Food | FoodShare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-lg-4 pb-4 mt-3">
+            <h2 class="fw-bold gradient-text mb-4"><i class="fas fa-utensils me-2"></i>Available Food Donations</h2>
+            
+            <!-- Filter Form -->
+            <form class="row g-3 mb-4 align-items-end" method="GET" th:action="@{/receiver/available}">
+                <div class="col-6 col-md-4 col-lg-3">
+                    <label for="city" class="form-label fw-semibold">City</label>
+                    <input type="text" id="city" name="city" class="form-control rounded-pill" 
+                           th:value="${city != null ? city : ''}" placeholder="Enter city">
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <label for="foodType" class="form-label fw-semibold">Food Type</label>
+                    <select id="foodType" name="foodType" class="form-select rounded-pill">
+                        <option value="">All Types</option>
+                        <option value="veg" th:selected="${foodType == 'veg'}">Vegetarian</option>
+                        <option value="non-veg" th:selected="${foodType == 'non-veg'}">Non-Vegetarian</option>
+                        <option value="other" th:selected="${foodType == 'other'}">Other</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3">
+                    <button class="btn gradient-btn w-100 rounded-pill" type="submit">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Empty State -->
+            <div th:if="${donations == null || donations.isEmpty()}" class="text-center py-5">
+                <div class="glass-card p-5 mx-auto" style="max-width: 500px;">
+                    <i class="fas fa-search fa-4x mb-3" style="color: var(--purple); opacity: 0.5;"></i>
+                    <h4 class="mb-3">No Available Donations</h4>
+                    <p class="text-muted">Check back later for new food donations in your area</p>
+                </div>
+            </div>
+            
+            <!-- Donations Grid -->
+            <div class="row g-4 mt-2" th:if="${donations != null && !donations.isEmpty()}">
+                <div class="col-12 col-md-6 col-lg-4 mb-3" th:each="donation : ${donations}">
+                    <div class="glass-card donation-card shadow rounded-4 h-100">
+                        <div class="img-wrap rounded-top-4" style="height:160px; overflow:hidden; background:#f8f9fa;">
+                            <img th:if="${donation.imageUrl != null && !donation.imageUrl.isEmpty()}" 
+                                 th:src="${donation.imageUrl}" 
+                                 alt="Food" 
+                                 class="w-100 h-100 object-fit-cover">
+                            <div th:unless="${donation.imageUrl != null && !donation.imageUrl.isEmpty()}" 
+                                 class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                <i class="fas fa-utensils fa-3x text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <div class="fw-bold fs-5 mb-2" th:text="${donation.foodName}">Food Name</div>
+                            <div class="small mb-2">
+                                <i class="fas fa-box me-1"></i>
+                                Qty: <span th:text="${donation.quantity}">0</span>
+                            </div>
+                            <div class="small mb-2" th:if="${donation.city}">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                <span th:text="${donation.city}">City</span>
+                            </div>
+                            <span class="badge bg-success rounded-pill mb-2" th:text="${donation.status}">Available</span>
+                            <div class="small text-muted mb-3" th:if="${donation.expiryDate}">
+                                <i class="fas fa-calendar me-1"></i>
+                                Expires: <span th:text="${#temporals.format(donation.expiryDate, 'dd MMM yyyy')}">Date</span>
+                            </div>
+                            <form th:action="@{'/receiver/claim/' + ${donation.id}}" method="post" class="mb-0">
+                                <button class="btn btn-sm gradient-btn rounded-pill w-100" type="submit">
+                                    <i class="fas fa-hand-holding-heart me-2"></i>Claim Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
