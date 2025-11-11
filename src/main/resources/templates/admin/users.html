@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users | FoodShare Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+        /* Custom Checkbox Styling */
+        .form-check-input {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+            border: 2px solid #6C63FF !important;
+            border-radius: 3px !important;
+            background-color: white !important;
+            transition: all 0.2s ease;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            position: relative;
+        }
+        
+        .form-check-input:hover {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1) !important;
+        }
+        
+        .form-check-input:checked {
+            background-color: #6C63FF !important;
+            border-color: #6C63FF !important;
+        }
+        
+        .form-check-input:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+        
+        .form-check-input:focus {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.2) !important;
+            outline: none !important;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            line-height: 1.5;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="admin-body">
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-xl-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="col-md-9 col-xl-10 admin-main">
+            <!-- Header -->
+            <div class="admin-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="admin-title mb-2">User Management</h1>
+                        <p class="admin-subtitle text-muted mb-0">Manage all registered users, roles, and permissions</p>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="fas fa-user-plus me-2"></i>Add User
+                        </button>
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-download me-2"></i>Export Users
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Filter and Search Bar -->
+            <div class="admin-card mb-4">
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">Search Users</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchUsers" placeholder="Search by name or email...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by Role</label>
+                            <select class="form-select" id="roleFilter">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="donor">Donor</option>
+                                <option value="receiver">Receiver</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by City</label>
+                            <select class="form-select" id="cityFilter">
+                                <option value="">All Cities</option>
+                                <option value="mumbai">Mumbai</option>
+                                <option value="delhi">Delhi</option>
+                                <option value="bangalore">Bangalore</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Statistics -->
+            <div class="row g-4 mb-4">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" th:text="${#lists.size(users)}">0</h3>
+                            <p class="stat-label">Total Users</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-green">
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" th:text="${#lists.size(users.?[role == 'ROLE_DONOR'])}">0</h3>
+                            <p class="stat-label">Active Donors</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-orange">
+                        <div class="stat-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" th:text="${#lists.size(users.?[role == 'ROLE_RECEIVER'])}">0</h3>
+                            <p class="stat-label">Receivers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-purple">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" th:text="${#lists.size(users.?[role == 'ROLE_ADMIN'])}">0</h3>
+                            <p class="stat-label">Administrators</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Users</h5>
+                    <p class="card-subtitle text-muted">Complete list of registered users</p>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-modern" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input" id="selectAll">
+                                    </th>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Location</th>
+                                    <th>Joined Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${users}">
+                                    <td>
+                                        <input type="checkbox" class="form-check-input user-checkbox" th:value="${user.id}">
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar-sm me-3">
+                                                <i class="fas fa-user-circle"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0" th:text="${user.name}">User Name</h6>
+                                                <small class="text-muted" th:text="${user.email}">user@example.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="role-badge"
+                                              th:classappend="${user.role == 'ROLE_ADMIN' ? 'role-badge-admin' : 
+                                                             (user.role == 'ROLE_DONOR' ? 'role-badge-donor' : 'role-badge-receiver')}"
+                                              th:text="${#strings.capitalize(#strings.toLowerCase(#strings.substringAfter(user.role, 'ROLE_')))}">
+                                            Role
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                        <span th:text="${user.city ?: 'Not specified'}">City</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy')}">Date</span>
+                                        <br>
+                                        <small class="text-muted" th:text="${#temporals.format(user.createdAt, 'HH:mm')}">Time</small>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-circle"></i> Active
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-outline-primary" th:data-id="${user.id}" onclick="viewUser(this.dataset.id)">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" th:data-id="${user.id}" onclick="editUser(this.dataset.id)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    th:data-id="${user.id}" th:data-name="${user.name}" onclick="deleteUser(this.dataset.id, this.dataset.name)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(users)}">
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted mb-0">No users found</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Table Footer with Pagination -->
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="table-info">
+                            <span class="text-muted">Showing <strong>1-10</strong> of <strong th:text="${#lists.size(users)}">0</strong> users</span>
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">3</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Search functionality
+    document.getElementById('searchUsers').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        
+        rows.forEach(row => {
+            const name = row.querySelector('h6')?.textContent.toLowerCase() || '';
+            const email = row.querySelector('small')?.textContent.toLowerCase() || '';
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Role filter
+    document.getElementById('roleFilter').addEventListener('change', function() {
+        const selectedRole = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        
+        rows.forEach(row => {
+            const roleElement = row.querySelector('.role-badge');
+            if (!roleElement) return;
+            
+            const role = roleElement.textContent.toLowerCase();
+            
+            if (!selectedRole || role.includes(selectedRole)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Select all functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Clear filters
+    function clearFilters() {
+        document.getElementById('searchUsers').value = '';
+        document.getElementById('roleFilter').value = '';
+        document.getElementById('cityFilter').value = '';
+        
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+    }
+
+    // User action functions
+    function viewUser(userId) {
+        // Implement view user functionality
+        alert('View user: ' + userId);
+    }
+
+    function editUser(userId) {
+        // Implement edit user functionality
+        window.location.href = '/admin/user/edit/' + userId;
+    }
+
+    function deleteUser(userId, userName) {
+        if (confirm('Are you sure you want to delete user "' + userName + '"?')) {
+            window.location.href = '/admin/user/delete/' + userId;
+        }
+    }
+</script>
+</body>
+</html>
