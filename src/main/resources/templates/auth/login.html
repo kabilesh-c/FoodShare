@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FoodShare</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #6C63FF 0%, #48C9B0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FF6B6B, #FFD93D);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-floating input {
+            border-radius: 16px !important;
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            height: 60px;
+            padding: 0.75rem 1rem;
+            padding-left: 3rem;
+            font-size: 0.95rem;
+            color: #212529;
+        }
+        
+        .form-floating input::placeholder {
+            color: transparent;
+        }
+        
+        .form-floating input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.15);
+        }
+        
+        .form-floating label {
+            padding: 1rem 1rem 1rem 3rem;
+            color: #adb5bd;
+            font-size: 0.95rem;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.15s ease-in-out;
+        }
+        
+        .form-floating > label i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+        }
+        
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .form-floating > .form-control:not(:placeholder-shown) ~ label i {
+            color: var(--purple);
+        }
+        
+        .form-check-input {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+            border: 2px solid #6C63FF !important;
+            border-radius: 3px !important;
+            background-color: white !important;
+            transition: all 0.2s ease;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            position: relative;
+        }
+        
+        .form-check-input:hover {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1) !important;
+        }
+        
+        .form-check-input:checked {
+            background-color: #6C63FF !important;
+            border-color: #6C63FF !important;
+        }
+        
+        .form-check-input:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+        
+        .form-check-input:focus {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.2) !important;
+            outline: none !important;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            line-height: 1.5;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo and Back Button -->
+        <div class="text-center mb-4">
+            <a th:href="@{/}" class="btn btn-light rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+        
+        <!-- Login Card -->
+        <div class="login-card fade-in">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h2 class="fw-bold gradient-text mb-2">Welcome Back!</h2>
+                <p class="text-muted">Sign in to continue to FoodShare</p>
+            </div>
+            
+            <!-- Error Alert -->
+            <div th:if="${param.error}" class="alert alert-danger rounded-xl fade-in" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Invalid email or password. Please try again.
+            </div>
+            
+            <!-- Logout Success Alert -->
+            <div th:if="${param.logout}" class="alert alert-success rounded-xl fade-in" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                You have been successfully logged out.
+            </div>
+            
+            <!-- Registration Success Alert -->
+            <div th:if="${registerSuccess}" class="alert alert-success rounded-xl fade-in" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                Registration successful! Please login to continue.
+            </div>
+            
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post" id="loginForm">
+                <div class="form-floating">
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="username" 
+                           placeholder="name@example.com" 
+                           required 
+                           autofocus>
+                    <label for="email">
+                        <i class="fas fa-envelope me-2"></i>Email Address
+                    </label>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="password" 
+                           class="form-control" 
+                           id="password" 
+                           name="password" 
+                           placeholder="Password" 
+                           required>
+                    <label for="password">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="form-check d-flex align-items-start">
+                        <input class="form-check-input" type="checkbox" id="remember" name="remember-me">
+                        <label class="form-check-label text-muted small ms-2" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    <a href="#" class="text-decoration-none small text-nowrap" style="color: var(--purple);">
+                        Forgot Password?
+                    </a>
+                </div>
+                
+                <button type="submit" class="btn gradient-btn w-100 py-3 mb-3 fw-bold">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </button>
+            </form>
+            
+            <hr class="my-4" style="opacity: 0.1;">
+            
+            <div class="text-center">
+                <p class="mb-0 text-muted">
+                    Don't have an account? 
+                    <a th:href="@{/register}" class="fw-bold text-decoration-none" style="color: var(--purple);">
+                        Register here
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-4">
+            <p class="text-white small">
+                &copy; 2025 FoodShare. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | FoodShare</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .register-container {
+            max-width: 550px;
+            width: 100%;
+        }
+        
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #6C63FF, #48C9B0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+        
+        .form-floating input,
+        .form-floating select {
+            border-radius: 16px !important;
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            height: 58px;
+            padding: 0.75rem 1rem;
+            padding-left: 3rem;
+            font-size: 0.95rem;
+            color: #212529;
+        }
+        
+        .form-floating input::placeholder,
+        .form-floating select::placeholder {
+            color: transparent;
+        }
+        
+        .form-floating input:focus,
+        .form-floating select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.15);
+        }
+        
+        .form-floating > label {
+            padding: 1rem 1rem 1rem 3rem;
+            color: #adb5bd;
+            font-size: 0.95rem;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.15s ease-in-out;
+        }
+        
+        .form-floating > label i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+        }
+        
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .form-floating > .form-control:not(:placeholder-shown) ~ label i {
+            color: var(--purple);
+        }
+        
+        .role-card {
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.25rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .role-card:hover {
+            border-color: var(--purple);
+            background: rgba(108, 99, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.15);
+        }
+        
+        .role-card.selected {
+            border-color: var(--purple);
+            border-width: 2px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.15), rgba(72, 201, 176, 0.15));
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+        }
+        
+        .role-card input[type="radio"] {
+            display: none;
+        }
+        
+        .role-card .fw-bold {
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+        }
+        
+        .form-check-input {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+            border: 2px solid #6C63FF !important;
+            border-radius: 3px !important;
+            background-color: white !important;
+            transition: all 0.2s ease;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            position: relative;
+        }
+        
+        .form-check-input:hover {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1) !important;
+        }
+        
+        .form-check-input:checked {
+            background-color: #6C63FF !important;
+            border-color: #6C63FF !important;
+        }
+        
+        .form-check-input:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+        
+        .form-check-input:focus {
+            border-color: #6C63FF !important;
+            box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.2) !important;
+            outline: none !important;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            line-height: 1.5;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- Back Button -->
+        <div class="text-center mb-4">
+            <a th:href="@{/}" class="btn btn-light rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+        
+        <!-- Register Card -->
+        <div class="register-card fade-in">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h2 class="fw-bold gradient-text mb-2">Join FoodShare</h2>
+                <p class="text-muted">Create your account and start making a difference</p>
+            </div>
+            
+            <!-- Error Alert -->
+            <div th:if="${emailExists}" class="alert alert-danger rounded-xl fade-in" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                This email is already registered. Please use a different email.
+            </div>
+            
+            <!-- Registration Form -->
+            <form th:action="@{/register}" method="post" th:object="${user}" id="registerForm">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   th:field="*{name}" 
+                                   placeholder="Full Name" 
+                                   required 
+                                   autofocus>
+                            <label for="name">
+                                <i class="fas fa-user me-2"></i>Full Name
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   th:field="*{email}" 
+                                   placeholder="Email Address" 
+                                   required>
+                            <label for="email">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   th:field="*{password}" 
+                                   placeholder="Password" 
+                                   required 
+                                   minlength="6">
+                            <label for="password">
+                                <i class="fas fa-lock me-2"></i>Password (min. 6 characters)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="tel" 
+                                   class="form-control" 
+                                   id="phone" 
+                                   th:field="*{phone}" 
+                                   placeholder="Phone Number" 
+                                   required>
+                            <label for="phone">
+                                <i class="fas fa-phone me-2"></i>Phone
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="city" 
+                                   th:field="*{city}" 
+                                   placeholder="City" 
+                                   required>
+                            <label for="city">
+                                <i class="fas fa-map-marker-alt me-2"></i>City
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Role Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold mb-3">
+                        <i class="fas fa-user-tag me-2"></i>I want to join as:
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label class="role-card" for="roleDonor">
+                                <input type="radio" 
+                                       id="roleDonor" 
+                                       th:field="*{role}" 
+                                       value="donor" 
+                                       required>
+                                <div class="mb-2">
+                                    <i class="fas fa-hand-holding-heart fa-2x" style="color: var(--purple);"></i>
+                                </div>
+                                <div class="fw-bold">Donor</div>
+                                <small class="text-muted">Share food</small>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="role-card" for="roleReceiver">
+                                <input type="radio" 
+                                       id="roleReceiver" 
+                                       th:field="*{role}" 
+                                       value="receiver" 
+                                       required>
+                                <div class="mb-2">
+                                    <i class="fas fa-users fa-2x" style="color: var(--teal);"></i>
+                                </div>
+                                <div class="fw-bold">Receiver</div>
+                                <small class="text-muted">Find food</small>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="role-card" for="roleAdmin">
+                                <input type="radio"
+                                       id="roleAdmin"
+                                       th:field="*{role}"
+                                       value="admin"
+                                       required>
+                                <div class="mb-2">
+                                    <i class="fas fa-user-shield fa-2x" style="color: var(--orange, #ff6b6b);"></i>
+                                </div>
+                                <div class="fw-bold">Admin</div>
+                                <small class="text-muted">Manage the platform</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-check mb-4 d-flex align-items-start">
+                    <input class="form-check-input mt-1" type="checkbox" id="terms" required>
+                    <label class="form-check-label text-muted small ms-2" for="terms">
+                        I agree to the <a href="#" class="text-decoration-none" style="color: var(--purple);">Terms of Service</a> 
+                        and <a href="#" class="text-decoration-none" style="color: var(--purple);">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn gradient-btn w-100 py-3 mb-3 fw-bold">
+                    <i class="fas fa-user-plus me-2"></i>Create Account
+                </button>
+            </form>
+            
+            <hr class="my-4" style="opacity: 0.1;">
+            
+            <div class="text-center">
+                <p class="mb-0 text-muted">
+                    Already have an account? 
+                    <a th:href="@{/login}" class="fw-bold text-decoration-none" style="color: var(--purple);">
+                        Sign in here
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-4">
+            <p class="text-white small">
+                &copy; 2025 FoodShare. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    
+    <script>
+        // Role card selection visual feedback
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Auto-hide alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
