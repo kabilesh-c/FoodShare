@@ -1,0 +1,18 @@
+<div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="toastMsg" class="toast glass-toast align-items-center text-white" role="alert" aria-live="assertive" aria-atomic="true"
+        th:classappend=" ${toastType != null ? 'bg-' + toastType : 'bg-success'} " th:if="${toastMessage != null}">
+        <div class="d-flex">
+            <div class="toast-body" th:text="${toastMessage}">Success message!</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+       var toastEl = document.getElementById('toastMsg');
+       if(toastEl) {
+           var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+           toast.show();
+       }
+    });
+</script>

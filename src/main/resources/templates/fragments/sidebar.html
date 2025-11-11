@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="sidebar" class="admin-sidebar">
+    <!-- Brand Header -->
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="fas fa-utensils"></i>
+        </div>
+        <div class="brand-text">
+            <h4 class="brand-title">FoodShare</h4>
+            <p class="brand-subtitle">Admin Panel</p>
+        </div>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+        <!-- Admin Links -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <div class="nav-section">
+                <h6 class="nav-section-title">Dashboard</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a th:href="@{/admin/dashboard}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/admin/dashboard' ? 'active' : ''}">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span class="nav-text">Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/analytics}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/admin/analytics' ? 'active' : ''}">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h6 class="nav-section-title">Management</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a th:href="@{/admin/users}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/admin/users' ? 'active' : ''}">
+                            <i class="fas fa-users nav-icon"></i>
+                            <span class="nav-text">Users</span>
+                            <span class="nav-badge">12</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/donations}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/admin/donations' ? 'active' : ''}">
+                            <i class="fas fa-box-open nav-icon"></i>
+                            <span class="nav-text">Donations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/reports}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/admin/reports' ? 'active' : ''}">
+                            <i class="fas fa-chart-bar nav-icon"></i>
+                            <span class="nav-text">Reports</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Donor Links -->
+        <div sec:authorize="hasRole('DONOR')">
+            <div class="nav-section">
+                <h6 class="nav-section-title">Donor Panel</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a th:href="@{/donor/dashboard}" class="nav-link">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/donor/add}" class="nav-link">
+                            <i class="fas fa-plus-circle nav-icon"></i>
+                            <span class="nav-text">Add Donation</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/donor/my}" class="nav-link">
+                            <i class="fas fa-box nav-icon"></i>
+                            <span class="nav-text">My Donations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/donor/analytics}" class="nav-link">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Receiver Links -->
+        <div sec:authorize="hasRole('RECEIVER')">
+            <div class="nav-section">
+                <h6 class="nav-section-title">Receiver Panel</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a th:href="@{/receiver/dashboard}" class="nav-link">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/receiver/available}" class="nav-link">
+                            <i class="fas fa-utensils nav-icon"></i>
+                            <span class="nav-text">Available Food</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- User Profile Section -->
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-info">
+                <h6 class="user-name" sec:authentication="name">Admin User</h6>
+                <p class="user-role">
+                    <span sec:authorize="hasRole('ADMIN')">Administrator</span>
+                    <span sec:authorize="hasRole('DONOR')">Donor</span>
+                    <span sec:authorize="hasRole('RECEIVER')">Receiver</span>
+                </p>
+            </div>
+            <div class="user-actions">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

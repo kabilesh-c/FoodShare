@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>FoodShare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script th:src="@{/js/main.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg glass-navbar shadow-lg mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="fas fa-utensils me-2"></i>
+            FoodShare
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+                <!-- Show only if authenticated -->
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') && #authorization.expression('hasRole(''DONOR'')')}">
+                    <a class="nav-link" th:href="@{/donor/dashboard}">Donor Dashboard</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') && #authorization.expression('hasRole(''RECEIVER'')')}">
+                    <a class="nav-link" th:href="@{/receiver/dashboard}">Receiver Dashboard</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') && #authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+                </li>
+                <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link rounded gradient-btn" th:href="@{/register}">Register</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+            <!-- Dark mode toggle -->
+            <button id="darkModeToggle" class="ms-4 btn btn-sm btn-outline-light rounded-pill px-3" onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+</body>
+</html>
