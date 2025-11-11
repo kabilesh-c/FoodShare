@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>My Donations | FoodShare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <aside class="col-md-3 col-xl-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </aside>
+        
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-lg-4 py-4">
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${successMessage}">Success message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}">Error message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold gradient-text mb-0"><i class="fas fa-box me-2"></i>My Donations</h2>
+                <a th:href="@{/donor/add}" class="btn gradient-btn rounded-pill">
+                    <i class="fas fa-plus-circle me-2"></i>New Donation
+                </a>
+            </div>
+            
+            <!-- Empty State -->
+            <div th:if="${donations == null || donations.isEmpty()}" class="text-center py-5">
+                <div class="glass-card p-5 mx-auto" style="max-width: 500px;">
+                    <i class="fas fa-box-open fa-4x mb-3" style="color: var(--purple); opacity: 0.5;"></i>
+                    <h4 class="mb-3">No Donations Yet</h4>
+                    <p class="text-muted mb-4">Start making a difference by adding your first donation</p>
+                    <a th:href="@{/donor/add}" class="btn gradient-btn rounded-pill px-4">
+                        <i class="fas fa-plus-circle me-2"></i>Add Your First Donation
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Donations Grid -->
+            <div class="row g-4" th:if="${donations != null && !donations.isEmpty()}">
+                <div class="col-12 col-sm-6 col-xl-4" th:each="donation : ${donations}">
+                    <div class="glass-card donation-card shadow rounded-4 h-100 overflow-hidden">
+                        <div class="position-relative">
+                            <div class="img-wrap" style="height:180px; overflow:hidden; background:#f8f9fa;">
+                                <img th:if="${donation.imageUrl != null && !donation.imageUrl.isEmpty()}" 
+                                     th:src="${donation.imageUrl}" 
+                                     alt="Food" 
+                                     class="w-100 h-100 object-fit-cover">
+                                <div th:unless="${donation.imageUrl != null && !donation.imageUrl.isEmpty()}" 
+                                     class="w-100 h-100 d-flex align-items-center justify-content-center bg-gradient" 
+                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <i class="fas fa-utensils fa-4x text-white opacity-25"></i>
+                                </div>
+                            </div>
+                            <span th:text="${donation.status}"
+                                  th:class="'badge position-absolute top-0 end-0 m-3 ' + 
+                                           (${donation.status?.toLowerCase() == 'available'} ? 'bg-success' : 
+                                           (${donation.status?.toLowerCase() == 'claimed'} ? 'bg-warning text-dark' : 
+                                           (${donation.status?.toLowerCase() == 'expired'} ? 'bg-danger' : 'bg-secondary')))">
+                            </span>
+                        </div>
+                        <div class="p-3">
+                            <h5 class="fw-bold mb-2" th:text="${donation.foodName}">Food Name</h5>
+                            <p class="text-muted small mb-3" th:text="${donation.description}" th:if="${donation.description}">Description</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="small">
+                                    <i class="fas fa-box text-primary me-1"></i>
+                                    <span class="fw-semibold" th:text="${donation.quantity}">0</span>
+                                </div>
+                                <div class="small" th:if="${donation.foodType}">
+                                    <span th:text="${donation.foodType == 'VEG' ? '🥗' : donation.foodType == 'NON-VEG' ? '🍗' : '�'}"></span>
+                                    <span th:text="${donation.foodType}">Type</span>
+                                </div>
+                            </div>
+                            
+                            <div class="small mb-2" th:if="${donation.city}">
+                                <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                <span th:text="${donation.city}">City</span>
+                            </div>
+                            
+                            <div class="small text-muted" th:if="${donation.expiryDate}">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                Expires: <span th:text="${#temporals.format(donation.expiryDate, 'dd MMM yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
