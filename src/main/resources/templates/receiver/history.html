@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Claim History | FoodShare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-lg-5 py-4">
+            <h2 class="fw-bold gradient-text mb-4"><i class="fas fa-history me-2"></i>Claimed Donations History</h2>
+            
+            <!-- Empty State -->
+            <div th:if="${requests == null || requests.isEmpty()}" class="text-center py-5">
+                <div class="glass-card p-5 mx-auto" style="max-width: 500px;">
+                    <i class="fas fa-clipboard-list fa-4x mb-3" style="color: var(--purple); opacity: 0.5;"></i>
+                    <h4 class="mb-3">No Claims Yet</h4>
+                    <p class="text-muted">You haven't claimed any donations yet</p>
+                    <a th:href="@{/receiver/available}" class="btn gradient-btn rounded-pill mt-3">
+                        <i class="fas fa-search me-2"></i>Browse Available Food
+                    </a>
+                </div>
+            </div>
+            
+            <!-- History Table -->
+            <div th:if="${requests != null && !requests.isEmpty()}" class="glass-card p-4 rounded-4 shadow">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr class="gradient-text">
+                                <th><i class="fas fa-utensils me-2"></i>Food</th>
+                                <th><i class="fas fa-user me-2"></i>Donor</th>
+                                <th><i class="fas fa-box me-2"></i>Qty</th>
+                                <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                <th><i class="fas fa-calendar me-2"></i>Requested At</th>
+                                <th><i class="fas fa-comment me-2"></i>Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="req : ${requests}">
+                                <td class="fw-semibold" th:text="${req.donation != null ? req.donation.foodName : 'N/A'}">Food Item</td>
+                                <td th:text="${req.donation != null && req.donation.donor != null ? req.donation.donor.name : 'Unknown'}">Donor Name</td>
+                                <td th:text="${req.donation != null ? req.donation.quantity : '0'}">Quantity</td>
+                                <td>
+                                    <span class="badge rounded-pill" 
+                                          th:text="${req.status}" 
+                                          th:classappend="${req.status == 'pending'} ? 'bg-warning text-dark' :
+                                                          ${req.status == 'approved'} ? 'bg-success' :
+                                                          ${req.status == 'completed'} ? 'bg-gradient text-white' : 
+                                                          ${req.status == 'rejected'} ? 'bg-danger' : 'bg-secondary'">
+                                        Status
+                                    </span>
+                                </td>
+                                <td th:text="${req.requestedAt != null ? #temporals.format(req.requestedAt, 'dd MMM yyyy') : 'N/A'}">Date</td>
+                                <td>
+                                    <a th:if="${req.status == 'completed' && req.donation != null}" 
+                                       th:href="@{'/receiver/feedback/' + ${req.donation.id}}"
+                                       class="btn btn-sm btn-outline-gradient rounded-pill">
+                                        <i class="fas fa-star me-1"></i>Give Feedback
+                                    </a>
+                                    <span th:if="${req.status != 'completed'}" class="small text-muted">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
