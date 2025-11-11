@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kabilesh C - Full Stack Developer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 25s infinite;
+            border-radius: 50%;
+        }
+
+        .bg-animation span:nth-child(1) { left: 25%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 10%; animation-delay: 2s; animation-duration: 20s; }
+        .bg-animation span:nth-child(3) { left: 70%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 0s; animation-duration: 18s; }
+        .bg-animation span:nth-child(5) { left: 65%; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { left: 75%; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { left: 35%; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { left: 50%; animation-delay: 15s; animation-duration: 45s; }
+        .bg-animation span:nth-child(9) { left: 20%; animation-delay: 2s; animation-duration: 35s; }
+        .bg-animation span:nth-child(10) { left: 85%; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Container */
+        .developer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: slideInDown 1s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .cta-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-custom {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary-custom {
+            background: white;
+            color: #667eea;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-custom:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-header i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* About Section */
+        .about-text {
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+        }
+
+        /* Tech Stack */
+        .tech-category {
+            margin-bottom: 30px;
+        }
+
+        .tech-category-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: default;
+        }
+
+        .tech-badge:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Project Role */
+        .role-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .role-list li {
+            color: white;
+            font-size: 1.1rem;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .role-list li:last-child {
+            border-bottom: none;
+        }
+
+        .role-list i {
+            color: #ffd700;
+            font-size: 1.3rem;
+        }
+
+        /* Connect Section */
+        .connect-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-5px) rotate(360deg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        .developer-footer {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        .footer-quote {
+            font-size: 1.3rem;
+            font-style: italic;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .back-to-home {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border: 2px solid white;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-to-home:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .glass-card {
+                padding: 25px;
+            }
+
+            .section-header {
+                font-size: 1.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="developer-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">Built by Kabilesh C</h1>
+            <p class="hero-subtitle">Full Stack Developer & Machine Learning Engineer</p>
+            
+            <div class="status-badge">
+                <i class="fas fa-circle" style="color: #4ade80; font-size: 0.8rem;"></i>
+                Open to Full Stack Developer and ML Engineer Intern roles
+            </div>
+
+            <div class="cta-buttons">
+                <a href="https://drive.google.com/file/d/1KJxYAqN7-dfYSauvTdT81qfM4sDQCU11/view?usp=drivesdk" 
+                   target="_blank" 
+                   class="btn-custom btn-primary-custom">
+                    <i class="fas fa-file-pdf"></i>
+                    View Resume
+                </a>
+                <a href="mailto:kabileshc.dev@gmail.com" 
+                   class="btn-custom btn-outline-custom">
+                    <i class="fas fa-envelope"></i>
+                    Contact Me
+                </a>
+            </div>
+        </div>
+
+        <!-- About Me Section -->
+        <div class="glass-card">
+            <h2 class="section-header">
+                <i class="fas fa-user-circle"></i>
+                About Me
+            </h2>
+            <div class="about-text">
+                <p>
+                    I'm a Full Stack Developer and Machine Learning Engineer passionate about building AI-driven systems that solve real-world problems.
+                </p>
+                <p>
+                    I'm currently an ML Intern at <strong>Fozzil</strong>, where I develop NLP models and full-stack systems for an AGI-based interactive museum project. I've worked on projects like Flood Prediction, Flood Damage Estimation, and Accident Damage Detection using YOLOv8 and other deep learning frameworks.
+                </p>
+                <p>
+                    I also serve as an ML Research Intern at the <strong>Center of Excellence: Agentic Twins (Tata Steel Project)</strong> and at <strong>UROP</strong>, focusing on AI model development for research publication.
+                </p>
+                <p>
+                    I've won <strong>3 national-level hackathons</strong>, including being a winner of the <strong>NASA Space Apps Challenge</strong> and securing second and third places in many competitions—experiences that strengthened my skills in problem-solving, teamwork, and model optimization.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tech Stack Section -->
+        <div class="glass-card">
+            <h2 class="section-header">
+                <i class="fas fa-code"></i>
+                Tech Stack
+            </h2>
+
+            <div class="tech-category">
+                <div class="tech-category-title">
+                    <i class="fas fa-laptop-code"></i> Programming Languages
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">JavaScript</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">C</span>
+                    <span class="tech-badge">C++</span>
+                    <span class="tech-badge">Java</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-title">
+                    <i class="fas fa-palette"></i> Frontend
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">HTML</span>
+                    <span class="tech-badge">CSS</span>
+                    <span class="tech-badge">Bootstrap</span>
+                    <span class="tech-badge">Tailwind CSS</span>
+                    <span class="tech-badge">shadcn/ui</span>
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Next.js</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-title">
+                    <i class="fas fa-server"></i> Backend
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">Express.js</span>
+                    <span class="tech-badge">REST API</span>
+                    <span class="tech-badge">MongoDB</span>
+                    <span class="tech-badge">PostgreSQL</span>
+                    <span class="tech-badge">MySQL</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-title">
+                    <i class="fas fa-brain"></i> Data Analysis & ML
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">NLP</span>
+                    <span class="tech-badge">Matplotlib</span>
+                    <span class="tech-badge">NumPy</span>
+                    <span class="tech-badge">Pandas</span>
+                    <span class="tech-badge">OpenCV</span>
+                    <span class="tech-badge">CNN</span>
+                    <span class="tech-badge">YOLO</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-title">
+                    <i class="fas fa-tools"></i> Tools
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">Git</span>
+                    <span class="tech-badge">Figma</span>
+                    <span class="tech-badge">Vercel</span>
+                    <span class="tech-badge">Render</span>
+                    <span class="tech-badge">Bun</span>
+                    <span class="tech-badge">Vite</span>
+                    <span class="tech-badge">Postman</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Role in This Project -->
+        <div class="glass-card">
+            <h2 class="section-header">
+                <i class="fas fa-puzzle-piece"></i>
+                My Role in This Project
+            </h2>
+            <ul class="role-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Architected and developed the complete full-stack application using Java Spring Boot, implementing secure authentication, role-based access control, and real-time data processing</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Designed and implemented a modern, responsive UI with glassmorphism effects, custom-styled form controls, and interactive data visualizations using Chart.js</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Integrated Supabase PostgreSQL cloud database with optimized connection pooling, implemented CRUD operations, and created a comprehensive admin dashboard with real-time analytics</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Connect With Me -->
+        <div class="glass-card">
+            <h2 class="section-header">
+                <i class="fas fa-link"></i>
+                Connect With Me
+            </h2>
+            <div class="connect-buttons">
+                <a href="https://github.com/kabilesh-c" target="_blank" class="social-btn" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/kabilesh-c20" target="_blank" class="social-btn" title="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="mailto:kabileshc.dev@gmail.com" class="social-btn" title="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="developer-footer">
+            <p class="footer-quote">
+                "Every line of code I write moves an idea closer to reality."
+            </p>
+            <a href="/" class="back-to-home">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

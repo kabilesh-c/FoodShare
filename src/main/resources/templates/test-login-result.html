@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Login Result | FoodShare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg glass-navbar shadow-lg mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="fas fa-utensils me-2"></i>
+            FoodShare - Test Result
+        </a>
+    </div>
+</nav>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:70vh;">
+    <div class="glass-card px-4 py-5 shadow-lg w-100" style="max-width: 500px;">
+        <h2 class="mb-4 text-center fw-bold">Test Login Result</h2>
+        
+        <div th:if="${userFound}" class="alert alert-success">
+            <h5>✅ User Found!</h5>
+            <p><strong>Name:</strong> <span th:text="${userName}"></span></p>
+            <p><strong>Role:</strong> <span th:text="${userRole}"></span></p>
+            <p><strong>Password Match:</strong> 
+                <span th:if="${passwordMatches}" class="text-success">✅ Yes</span>
+                <span th:unless="${passwordMatches}" class="text-danger">❌ No</span>
+            </p>
+        </div>
+        
+        <div th:unless="${userFound}" class="alert alert-danger">
+            <h5>❌ User Not Found!</h5>
+            <p>The email address was not found in the database.</p>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a th:href="@{/test-login}" class="btn btn-primary">Test Another Login</a>
+            <a th:href="@{/login}" class="btn btn-outline-primary ms-2">Go to Real Login</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

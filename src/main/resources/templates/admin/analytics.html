@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics Dashboard | FoodShare Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin-body">
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-xl-2 d-none d-md-block">
+            <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="col-md-9 col-xl-10 admin-main">
+            <!-- Header -->
+            <div class="admin-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="admin-title mb-2">Analytics Dashboard</h1>
+                        <p class="admin-subtitle text-muted mb-0">Comprehensive insights and performance metrics</p>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-calendar me-2"></i>Last 30 Days
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                                <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+                                <li><a class="dropdown-item" href="#">Last 90 Days</a></li>
+                                <li><a class="dropdown-item" href="#">This Year</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-download me-2"></i>Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row g-4 mb-5">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="metric-card metric-card-primary">
+                        <div class="metric-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 class="metric-number" th:text="${totalReportedDonations ?: 0}">0</h3>
+                            <p class="metric-label">Total Donations</p>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+12.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="metric-card metric-card-success">
+                        <div class="metric-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 class="metric-number" th:text="${totalFoodSaved ?: 0}">0</h3>
+                            <p class="metric-label">Food Saved (kg)</p>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+8.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="metric-card metric-card-warning">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 class="metric-number" th:text="${totalReceiversServed ?: 0}">0</h3>
+                            <p class="metric-label">People Served</p>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+15.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="metric-card metric-card-info">
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 class="metric-number" th:text="${#lists.size(topDonors ?: {})}">0</h3>
+                            <p class="metric-label">Active Donors</p>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+6.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row g-4 mb-5">
+                <!-- Monthly Trend Chart -->
+                <div class="col-lg-8">
+                    <div class="admin-card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Monthly Donation Trends</h5>
+                            <p class="card-subtitle text-muted">Track donation patterns over the past 12 months</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyTrendChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Food Type Distribution -->
+                <div class="col-lg-4">
+                    <div class="admin-card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Food Type Distribution</h5>
+                            <p class="card-subtitle text-muted">Popular food categories</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="foodTypeChart" height="160"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Weekly Activity -->
+                <div class="col-lg-6">
+                    <div class="admin-card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Weekly Activity</h5>
+                            <p class="card-subtitle text-muted">Donations by day of the week</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="weeklyActivityChart" height="140"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Donors -->
+                <div class="col-lg-6">
+                    <div class="admin-card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Top Contributors</h5>
+                            <p class="card-subtitle text-muted">Most active donors this month</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topDonorsChart" height="140"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Insights -->
+            <div class="row g-4">
+                <!-- Recent Performance -->
+                <div class="col-lg-8">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Performance Insights</h5>
+                            <p class="card-subtitle text-muted">Latest platform metrics and efficiency reports</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-modern">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th>Current</th>
+                                            <th>Previous</th>
+                                            <th>Change</th>
+                                            <th>Performance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-hand-holding-heart text-primary me-2"></i>
+                                                    Donation Rate
+                                                </div>
+                                            </td>
+                                            <td><span class="fw-bold">847</span></td>
+                                            <td>756</td>
+                                            <td><span class="text-success">+12.0%</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" style="width: 85%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-clock text-warning me-2"></i>
+                                                    Avg. Claim Time
+                                                </div>
+                                            </td>
+                                            <td><span class="fw-bold">2.4h</span></td>
+                                            <td>3.1h</td>
+                                            <td><span class="text-success">-22.6%</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" style="width: 92%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                                    Expiry Rate
+                                                </div>
+                                            </td>
+                                            <td><span class="fw-bold">5.2%</span></td>
+                                            <td>7.8%</td>
+                                            <td><span class="text-success">-33.3%</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" style="width: 78%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="col-lg-4">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Quick Stats</h5>
+                            <p class="card-subtitle text-muted">Key numbers at a glance</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-stats">
+                                <div class="quick-stat-item">
+                                    <div class="stat-icon-sm bg-primary">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h6 class="mb-0">Today's Donations</h6>
+                                        <span class="text-muted">34 new donations</span>
+                                    </div>
+                                    <div class="stat-value">
+                                        <strong>34</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-stat-item">
+                                    <div class="stat-icon-sm bg-success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h6 class="mb-0">Success Rate</h6>
+                                        <span class="text-muted">Claimed donations</span>
+                                    </div>
+                                    <div class="stat-value">
+                                        <strong>94.8%</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-stat-item">
+                                    <div class="stat-icon-sm bg-warning">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h6 class="mb-0">Avg Response</h6>
+                                        <span class="text-muted">Time to claim</span>
+                                    </div>
+                                    <div class="stat-value">
+                                        <strong>2.4h</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-stat-item">
+                                    <div class="stat-icon-sm bg-info">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h6 class="mb-0">Active Users</h6>
+                                        <span class="text-muted">This week</span>
+                                    </div>
+                                    <div class="stat-value">
+                                        <strong>1,247</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Chart configuration
+        Chart.defaults.font.family = '"Poppins", sans-serif';
+        Chart.defaults.color = '#6c757d';
+        
+        // Data from server (with fallbacks)
+        const monthlyLabels = /*[[${monthlyLabels}]]*/ ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthlyValues = /*[[${monthlyValues}]]*/ [45, 52, 38, 67, 89, 76, 102, 94, 87, 115, 98, 134];
+        const foodTypeLabels = /*[[${foodTypeLabels}]]*/ ['Vegetables', 'Fruits', 'Grains', 'Dairy', 'Others'];
+        const foodTypeValues = /*[[${foodTypeValues}]]*/ [35, 25, 20, 15, 5];
+        const weeklyLabels = /*[[${weeklyLabels}]]*/ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const weeklyValues = /*[[${weeklyValues}]]*/ [12, 18, 15, 22, 28, 35, 24];
+        const topDonorNames = /*[[${topDonorNames}]]*/ ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Wilson', 'David Brown'];
+        const topDonorCounts = /*[[${topDonorCounts}]]*/ [45, 38, 32, 28, 25];
+
+        // Monthly Trend Chart
+        new Chart(document.getElementById('monthlyTrendChart'), {
+            type: 'line',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Donations',
+                    data: monthlyValues,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#6366f1',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        cornerRadius: 8,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        border: { display: false },
+                        grid: { display: false },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y: {
+                        border: { display: false },
+                        grid: { color: 'rgba(156, 163, 175, 0.2)' },
+                        ticks: { color: '#9ca3af' }
+                    }
+                }
+            }
+        });
+
+        // Food Type Distribution Chart
+        new Chart(document.getElementById('foodTypeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: foodTypeLabels,
+                datasets: [{
+                    data: foodTypeValues,
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, font: { size: 12 } }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Weekly Activity Chart
+        new Chart(document.getElementById('weeklyActivityChart'), {
+            type: 'bar',
+            data: {
+                labels: weeklyLabels,
+                datasets: [{
+                    label: 'Donations',
+                    data: weeklyValues,
+                    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                    borderColor: '#22c55e',
+                    borderWidth: 0,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        border: { display: false },
+                        grid: { display: false },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y: {
+                        border: { display: false },
+                        grid: { color: 'rgba(156, 163, 175, 0.2)' },
+                        ticks: { color: '#9ca3af' }
+                    }
+                }
+            }
+        });
+
+        // Top Donors Chart
+        new Chart(document.getElementById('topDonorsChart'), {
+            type: 'bar',
+            data: {
+                labels: topDonorNames,
+                datasets: [{
+                    label: 'Donations',
+                    data: topDonorCounts,
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(139, 92, 246, 0.8)'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        border: { display: false },
+                        grid: { color: 'rgba(156, 163, 175, 0.2)' },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y: {
+                        border: { display: false },
+                        grid: { display: false },
+                        ticks: { color: '#9ca3af' }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
