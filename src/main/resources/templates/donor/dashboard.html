@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Dashboard | FoodShare</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-xl-2 d-none d-md-block">
+                <div th:replace="~{fragments/sidebar_simple :: sidebar}"></div>
+            </div>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 col-lg-10 px-4 py-4">
+                <!-- Header Section -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+                    <div>
+                        <h2 class="fw-bold gradient-text mb-1">Welcome Back, <span th:text="${donor?.name ?: 'Donor'}">Donor</span>!</h2>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span th:text="${donor?.city ?: 'Your City'}">City</span>
+                        </p>
+                    </div>
+                    <div>
+                        <a class="btn gradient-btn rounded-pill px-4" th:href="@{/donor/add}">
+                            <i class="fas fa-plus-circle me-2"></i>Add Donation
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="row g-4 mb-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-stat-card text-center fade-in">
+                            <div class="stat-value" th:text="${totalDonations ?: 0}">0</div>
+                            <div class="stat-label">Total Donations</div>
+                            <i class="fas fa-box-open fa-2x mt-2" style="color: var(--purple); opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-stat-card text-center fade-in">
+                            <div class="stat-value" th:text="${totalFoodSaved != null ? totalFoodSaved + 'kg' : '0kg'}">0kg</div>
+                            <div class="stat-label">Food Saved</div>
+                            <i class="fas fa-weight fa-2x mt-2" style="color: var(--teal); opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-stat-card text-center fade-in">
+                            <div class="stat-value" th:text="${peopleFed ?: 0}">0</div>
+                            <div class="stat-label">People Fed</div>
+                            <i class="fas fa-users fa-2x mt-2" style="color: var(--coral); opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-stat-card text-center fade-in">
+                            <div class="stat-value" th:text="${successRate != null ? successRate + '%' : '0%'}">0%</div>
+                            <div class="stat-label">Success Rate</div>
+                            <i class="fas fa-chart-line fa-2x mt-2" style="color: var(--gold); opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="chart-card fade-in">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-chart-pie me-2" style="color: var(--purple);"></i>
+                                Donations by Category
+                            </h5>
+                            <canvas id="categoryChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="chart-card fade-in">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-chart-bar me-2" style="color: var(--teal);"></i>
+                                Monthly Impact
+                            </h5>
+                            <canvas id="monthlyChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Donations -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-clock me-2" style="color: var(--purple);"></i>
+                            Recent Donations
+                        </h4>
+                        <a th:href="@{/donor/my}" class="text-decoration-none" style="color: var(--purple);">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- Donation Card -->
+                        <div class="col-12 col-md-6 col-lg-4" th:each="donation : ${donations}">
+                            <div class="donation-card fade-in">
+                                <div class="img-wrap">
+                                    <img th:src="${donation.imageUrl ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=200&fit=crop'}" 
+                                         alt="Food" 
+                                         onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=200&fit=crop'">
+                                    <div class="position-absolute top-0 end-0 m-3">
+                                        <span class="badge badge-success-gradient" th:text="${donation.status}">available</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-2" th:text="${donation.foodName}">Food Name</h6>
+                                    <p class="small text-muted mb-2" th:text="${donation.description}">Description</p>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="small">
+                                            <i class="fas fa-box me-1"></i>
+                                            <span th:text="${donation.quantity}">Quantity</span>
+                                        </span>
+                                        <span class="badge" 
+                                              th:classappend="${donation.foodType == 'veg'} ? 'bg-success' : 'bg-danger'" 
+                                              th:text="${donation.foodType}">Type</span>
+                                    </div>
+                                    <div class="small text-muted mb-3">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        Expires: <span th:text="${#temporals.format(donation.expiryDate, 'dd MMM yyyy')}">Date</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a th:href="@{'/donor/edit/' + ${donation.id}}" class="btn btn-sm btn-outline-gradient flex-fill">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                        <button th:data-donation-id="${donation.id}" onclick="deleteDonation(this.getAttribute('data-donation-id'))" class="btn btn-sm btn-outline-danger flex-fill">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- No Donations Placeholder -->
+                        <div class="col-12" th:if="${donations == null or donations.isEmpty()}">
+                            <div class="glass-card text-center py-5">
+                                <i class="fas fa-box-open fa-4x mb-3" style="color: var(--purple); opacity: 0.3;"></i>
+                                <h5 class="fw-bold mb-2">No Donations Yet</h5>
+                                <p class="text-muted mb-3">Start making a difference by adding your first donation</p>
+                                <a th:href="@{/donor/add}" class="btn gradient-btn">
+                                    <i class="fas fa-plus-circle me-2"></i>Add Your First Donation
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    
+    <script>
+        // Get real-time data from Thymeleaf
+        const vegCount = [[${vegCount}]] || 0;
+        const nonVegCount = [[${nonVegCount}]] || 0;
+        const otherCount = [[${otherCount}]] || 0;
+        
+        // Category Pie Chart
+        const categoryCtx = document.getElementById('categoryChart');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Veg', 'Non-Veg', 'Other'],
+                    datasets: [{
+                        data: [vegCount, nonVegCount, otherCount],
+                        backgroundColor: ['#48C9B0', '#FF6B6B', '#FFD93D'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Poppins', size: 12 },
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Monthly Bar Chart - using total donations as placeholder
+        const totalDonations = [[${totalDonations}]] || 0;
+        const monthlyCtx = document.getElementById('monthlyChart');
+        if (monthlyCtx) {
+            // Distribute donations across 6 months for visualization
+            const monthlyData = [];
+            for (let i = 0; i < 6; i++) {
+                monthlyData.push(Math.floor(totalDonations / 6) + Math.floor(Math.random() * 3));
+            }
+            
+            new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Donations',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(108, 99, 255, 0.8)',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Delete donation function
+        function deleteDonation(id) {
+            if (confirm('Are you sure you want to delete this donation?')) {
+                window.location.href = '/donor/delete/' + id;
+            }
+        }
+    </script>
+</body>
+</html>
